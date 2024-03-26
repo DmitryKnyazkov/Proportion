@@ -14,18 +14,25 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Решаем пропорцию.\nA так относится к B,\nкак C относится к D"/>
+
         <LinearLayout
             android:layout_marginTop="130dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_margin="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
-                android:text="a1a1a1"
+                android:text="A"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:id="@+id/a1"
@@ -38,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:layout_weight="1"
-                android:text="a2a2a2"
+                android:text="B"
                 android:textSize="30sp"
                 android:background="@color/white"/>
         </LinearLayout>
@@ -53,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
-                android:text="b1b1b1"
+                android:text="C"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:id="@+id/b1"
@@ -65,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:layout_weight="1"
-                android:text="b2b2b2"
+                android:text="D"
                 android:textSize="30sp"
                 android:layout_margin="10dp"
                 android:background="@color/white"/>
