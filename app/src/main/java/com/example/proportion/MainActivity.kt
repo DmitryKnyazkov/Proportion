@@ -3,6 +3,7 @@ package com.example.proportion
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,7 +14,10 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private  val viewModel = ProportionViewModel()
+
+    //Здесь нельзя было просто вызывать конструктор viewModel (это неверно работает при
+    //поворотах экрана и других изменениях конфигурации)
+    private val viewModel: ProportionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
