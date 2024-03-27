@@ -1,18 +1,21 @@
 package com.example.proportion
 
-import android.widget.TextView
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.google.android.material.textfield.TextInputLayout.LengthCounter
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
 class FieldViewModel (str: String) {
     private val mutableValueFlow = MutableStateFlow(str)
 
     val valueFlow: StateFlow<String> = mutableValueFlow.asStateFlow()
 
-    val focusFlow: StateFlow<Boolean> = TODO()
+    //Пришлось дописать, чтобы запускалось
+    //Нужно для того, чтобы подсветку можно было включать
+    private val mutableFocusFlow = MutableStateFlow(false)
+    val focusFlow: StateFlow<Boolean> = mutableFocusFlow.asStateFlow()
     private var value = str
     private var start = true
 
@@ -23,11 +26,19 @@ class FieldViewModel (str: String) {
         if (start) {value=char.toString()}
         else value += char
         mutableValueFlow.emit(value)
+        //Теперь обрабатываем ввод по новому
+        start = false
     }
 
-    fun setFocus () {TODO()}
+    suspend fun setFocus() {
+        //Просто сообщаем view об установке
+        mutableFocusFlow.emit(true)
+    }
 
-    fun  lostFocus () {TODO()}
+    suspend fun lostFocus() {
+        //Просто сообщаем view о потере фокуса
+        mutableFocusFlow.emit(false)
+    }
 
     fun setResult(value: Float) {TODO()} // передаем результат вычисления.
 
@@ -52,13 +63,35 @@ class ProportionViewModel: ViewModel() {
 
     fun getFlow(a: Int): StateFlow<String> = fields[a].valueFlow
 
-    private val currentField = fields[0]
-    init {currentField.setFocus()}
+    // Позволяем получить focusFlow из полей
+    fun getFocusFlow(a: Int) = fields[a].focusFlow
 
-    fun setFocus(a: Int) {TODO()}
+
+    private var currentField = fields[0]
+
+    init {
+        //Приходится запускать в coroutine
+        viewModelScope.launch {
+            currentField.setFocus()
+        }
+    }
+
+    fun setFocus(a: Int) {
+        viewModelScope.launch {
+            //Сообщаем о потере фокуса
+            currentField.lostFocus()
+            //Меняем текущее поле
+            currentField = fields[a]
+            //Сообщаем о возвращении фокуса
+            currentField.setFocus()
+        }
+    }
 
     fun enterChar(a: Char) {
-        currentField.enterChar(a)
+        //Запускаем корутину внутри scope viewModelScope для корректного уничтожения
+        viewModelScope.launch {
+            currentField.enterChar(a)
+        }
     }
 
     private fun ChangeField() {
