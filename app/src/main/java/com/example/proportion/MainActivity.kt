@@ -1,23 +1,33 @@
 package com.example.proportion
 
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.proportion.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private  val viewModel = ProportionViewModel()
+
+    //Здесь нельзя было просто вызывать конструктор viewModel (это неверно работает при
+    //поворотах экрана и других изменениях конфигурации)
+    private val viewModel: ProportionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        var setTextVieww = binding.a1
-        var counter = 0
+        //  var setTextVieww = binding.a1
+        //  var counter = 0
 
+        //TODO  Подсказка - дублирование можно убрать, если
+        // binding.a1, binding.a2, binding.b1, binding.b2 записать в масив
         binding.a1.setOnClickListener {
 //            setTextVieww = binding.a1
 //            counter++
@@ -87,16 +97,89 @@ class MainActivity : AppCompatActivity() {
 //            else setTextVieww.text = viewModel.makerStr(".", counter)
             viewModel.enterChar('.')
         }
+
+        //Только отправить во ViewModel
         binding.del.setOnClickListener { TODO()
 //            setTextVieww.text = viewModel.makerStr("D", counter)
         }
+
+        //Только отправить во ViewModel
         binding.reset.setOnClickListener { TODO()
 //            binding.a1.text = "A"
 //            binding.a2.text = "B"
 //            binding.b1.text = "C"
 //            binding.b2.text = "D"
         }
-//        lifecycleScope.launch {
+        lifecycleScope.launch {
+
+            //Запускаем при появлении на экране, останавливаем при исчезании
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                //Далее 4 корутины запускаем параллельно.
+                //Иначе строки после collect никогда не будут работать
+                //TODO  Подсказка - дублирование можно убрать, если
+                // binding.a1, binding.a2, binding.b1, binding.b2 записать в масив
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getFlow(0).collect {
+                        binding.a1.text = it
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего второму field
+                    viewModel.getFlow(1).collect {
+                        binding.a2.text = it
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего третьему field
+                    viewModel.getFlow(2).collect {
+                        binding.b1.text = it
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего четвертому field
+                    viewModel.getFlow(3).collect {
+                        binding.b2.text = it
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getFocusFlow(0).collect {
+                        //Если выделено то делаем белый цвет, иначе серый
+                        binding.a1.background = ColorDrawable(
+                            if (it) Color.WHITE else Color.GRAY
+                        )
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getFocusFlow(1).collect {
+                        //Если выделено то делаем белый цвет, иначе серый
+                        binding.a2.background = ColorDrawable(
+                            if (it) Color.WHITE else Color.GRAY
+                        )
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getFocusFlow(2).collect {
+                        //Если выделено то делаем белый цвет, иначе серый
+                        binding.b1.background = ColorDrawable(
+                            if (it) Color.WHITE else Color.GRAY
+                        )
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getFocusFlow(3).collect {
+                        //Если выделено то делаем белый цвет, иначе серый
+                        binding.b2.background = ColorDrawable(
+                            if (it) Color.WHITE else Color.GRAY
+                        )
+                    }
+                }
+            }
+
 //            var changer = false
 //
 //            val case1 = binding.a1.text != "A" &&
@@ -114,14 +197,12 @@ class MainActivity : AppCompatActivity() {
 //
 //
 //            }
-//        }
+        }
 
     }
 
-    fun ChangeComma(str: String): Boolean {
-
-        if (str.contains(".")) {
-            return true
-        } else return false
-    }
+//    fun ChangeComma(str: String): Boolean {
+//
+//        return str.contains(".")
+//    }
 }
