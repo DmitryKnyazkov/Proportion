@@ -38,7 +38,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
 
     //Добавлено, чтобы был доступен viewModelScope
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")

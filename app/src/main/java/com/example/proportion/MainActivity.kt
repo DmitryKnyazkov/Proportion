@@ -99,17 +99,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Только отправить во ViewModel
-        binding.del.setOnClickListener { TODO()
+        binding.del.setOnClickListener {
+            viewModel.deleteChar()
 //            setTextVieww.text = viewModel.makerStr("D", counter)
         }
 
         //Только отправить во ViewModel
-        binding.reset.setOnClickListener { TODO()
-//            binding.a1.text = "A"
-//            binding.a2.text = "B"
-//            binding.b1.text = "C"
-//            binding.b2.text = "D"
+        binding.reset.setOnClickListener {
+            viewModel.resetField()
         }
+
         lifecycleScope.launch {
 
             //Запускаем при появлении на экране, останавливаем при исчезании
@@ -178,31 +177,50 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                 }
+
+
+
+
+
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getResultFlow(0).collect {
+                        //Если выделено то делаем белый цвет, иначе серый
+                        binding.a1.background = ColorDrawable(
+                            if (it) Color.GREEN  else Color.GRAY
+                        )
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getResultFlow(1).collect {
+                        //Если выделено то делаем белый цвет, иначе серый
+                        binding.a2.background = ColorDrawable(
+                            if (it) Color.GREEN  else Color.GRAY
+                        )
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getResultFlow(2).collect {
+                        //Если выделено то делаем белый цвет, иначе серый
+                        binding.b1.background = ColorDrawable(
+                            if (it) Color.GREEN  else Color.GRAY
+                        )
+                    }
+                }
+                launch {
+                    //Выводим строки из flow, соответствующего первому field
+                    viewModel.getResultFlow(3).collect {
+                        //Если выделено то делаем белый цвет, иначе серый
+                        binding.b2.background = ColorDrawable(
+                            if (it) Color.GREEN else Color.GRAY
+                        )
+                    }
+                }
             }
 
-//            var changer = false
-//
-//            val case1 = binding.a1.text != "A" &&
-//                    binding.a2.text != "B" &&
-//                    binding.b1.text != "C" &&
-//                    binding.b2.text == "D"
-//
-//            val case2 = binding.a1.text != "A" &&
-//                    binding.a2.text != "B" &&
-//                    binding.b1.text == "C" &&
-//                    binding.b2.text != "D"
-//
-//            while (changer == false) {
-//                if (changer == case1) {}
-//
-//
-//            }
         }
 
     }
-
-//    fun ChangeComma(str: String): Boolean {
-//
-//        return str.contains(".")
-//    }
 }
