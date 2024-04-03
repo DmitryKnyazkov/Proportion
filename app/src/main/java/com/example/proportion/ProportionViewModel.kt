@@ -94,9 +94,6 @@ class FieldViewModel (str: String) {
         mutableResultFlow.emit(false)
     }
 
-    suspend fun setResult(value: Float) {
-        mutableValueFlow.emit(value.toString())
-    } // передаем результат вычисления.
 
     fun getValue(): Float {
         return value.toFloat()
@@ -104,18 +101,16 @@ class FieldViewModel (str: String) {
 
     suspend fun ssetValueForResultField(a: Float?) {
         value = a.toString()
-        mutableValueFlow.emit(value.toString())
+        mutableValueFlow.emit(value)
     }
 
 
 }
+
 // Этот класс управляет экземплярами класса FieldViewModel. обращается через переменную fields к экземпляру
 // класса FieldViewModel, т.е. к нужному полю и сообщает что нужно транслировать. в активити есть для
 // каждого поля по 2 корутины. всего 8 корутин. первая корутина собирает информацию какое число ей
 // записать в это поле, а вторая корурина отслеживает, ативна для записи это поле или нет.
-//
-
-
 class ProportionViewModel: ViewModel() {
 
     var model = ProportionModel()
