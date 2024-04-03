@@ -1,5 +1,6 @@
 package com.example.proportion
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,14 +46,16 @@ class FieldViewModel (str: String) {
     }
 
     suspend fun ddeleteChar() {
+        Log.d("AAA", "before:$value")
         if (value != "") {
-            var strCopy = value.replaceFirst(".$".toRegex(), "")
+            var strCopy = value.replaceFirst(".$".toRegex(), "") // можно value.dropLast
             value = strCopy
         }
 
         if (value == "0") {value = ""}
         mutableValueFlow.emit(value)
         if (value == "") { start = true}
+        Log.d("AAA", "after:$value")
     }
 
 
@@ -100,7 +103,7 @@ class FieldViewModel (str: String) {
     } // возвращает число которое ввел пользователь
 
     suspend fun ssetValueForResultField(a: Float?) {
-        value = a.toString()
+        val value = a.toString()
         mutableValueFlow.emit(value)
     }
 
@@ -182,6 +185,7 @@ class ProportionViewModel: ViewModel() {
     fun deleteChar() {
         viewModelScope.launch {
             currentField.ddeleteChar()
+            checkFields()
             getResultWriteValue()
         }
     }
@@ -208,7 +212,7 @@ class ProportionViewModel: ViewModel() {
                 getResultWriteValue()
 
             }
-        }
+        } else resultFieldViewModel = null
     }
 
     fun getResultWriteValue () {
@@ -219,11 +223,12 @@ class ProportionViewModel: ViewModel() {
     }
 
     fun getResult(): Float? {
+        Log.d("AAA", resultFieldViewModel?.resultFlow?.value.toString())
         when (resultFieldViewModel) {
-            fields[0] -> return model.calculate(fields[1].getValue().toFloat(), fields[2].getValue().toFloat(), fields[3].getValue().toFloat())
-            fields[1] -> return model.calculate(fields[0].getValue().toFloat(), fields[3].getValue().toFloat(), fields[2].getValue().toFloat())
-            fields[2] -> return model.calculate(fields[0].getValue().toFloat(), fields[3].getValue().toFloat(), fields[1].getValue().toFloat())
-            fields[3] -> return model.calculate(fields[1].getValue().toFloat(), fields[2].getValue().toFloat(), fields[0].getValue().toFloat())
+            fields[0] -> return model.calculate(fields[1].getValue(), fields[2].getValue(), fields[3].getValue())
+            fields[1] -> return model.calculate(fields[0].getValue(), fields[3].getValue(), fields[2].getValue())
+            fields[2] -> return model.calculate(fields[0].getValue(), fields[3].getValue(), fields[1].getValue())
+            fields[3] -> return model.calculate(fields[1].getValue(), fields[2].getValue(), fields[0].getValue())
         }
         return null
     }
